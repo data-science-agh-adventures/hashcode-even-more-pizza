@@ -1,12 +1,70 @@
 from copy import deepcopy
 import sys
+import logging
 
 
 def get_problem_solution_output(pizza_list, two_teams, three_teams, four_teams):
-    return [
-        (2, [1, 4]),
-        (3, [0, 2, 3])
-    ]
+    team_divisions = divide_for_sum_of_team_sizes(len(pizza_list), \
+        two_teams, three_teams, four_teams)
+    
+    points = 0
+    result = []
+    team_sizes = (4, 3, 2)
+    pizza_list_temp = deepcopy(pizza_list)
+    for team_division, team_size in zip(team_divisions, team_sizes):
+        if team_division < 1:
+            continue
+
+        team_pizzas = (team_size, [])
+        for _ in range(team_division):
+            pizzas = get_max_pizzas_for_team(pizza_list_temp, team_size)
+            for element in pizzas[0]:
+                pizza_list_temp.pop(element)
+                team_pizzas[1].append(element)
+            points += pizzas[1]
+        result.append(team_pizzas)
+    
+    logging.debug(points)
+    return result
+    # return [
+    #     (2, [1, 4]),
+    #     (3, [0, 2, 3])
+    # ]
+
+
+def divide_for_sum_of_team_sizes(pizza_count, t2, t3, t4):
+    fours, threes, twos = 0, 0, 0
+    while (pizza_count >= 6 or pizza_count == 4) and fours < t4:
+        fours += 1
+        pizza_count -= 4
+    
+    while (pizza_count >= 5 or pizza_count == 3) and threes < t3:
+        threes += 1
+        pizza_count -= 3
+    
+    while (pizza_count >= 4 or pizza_count == 2) and twos < t2:
+        twos += 1
+        pizza_count -= 2
+    
+    return fours, threes, twos
+
+
+def get_max_pizzas_for_team(pizza_list, pizza_count_for_team):
+    result = {}
+    pizza_list_temp = deepcopy(pizza_list)
+    points = 0
+    for _ in range(pizza_count_for_team):
+        max_pizza_index = max(pizza_list_temp, key = lambda x: pizza_list_temp[x][0])
+        points += len(pizza_list_temp[max_pizza_index][1])
+        ingredients = pizza_list_temp.pop(max_pizza_index)
+        for ingredient in ingredients[1]:
+            for line in pizza_list_temp:
+                for ing in pizza_list_temp[line][1]:
+                    if ing == ingredient:
+                        pizza_list_temp[line][1].remove(ing)
+                        pizza_list_temp[line][0] -= 1
+        result[max_pizza_index] = pizza_list[max_pizza_index]
+    return result, points ** 2
 
 
 def write_output(path_to_base_on, solution_output):
@@ -16,8 +74,10 @@ def write_output(path_to_base_on, solution_output):
         teams_count = len(solution_output)
         line = f'{teams_count}\n'
         target_file.write(line)
-        for team_size, pizzas in solution_output:
-            line = f'{team_size} {" ".join(map(str, pizzas))}\n'
+        for i, (team_size, pizzas) in enumerate(solution_output):
+            line = f'{team_size} {" ".join(map(str, pizzas))}'
+            if i < teams_count - 1:
+                line += '\n'
             target_file.write(line)
 
 
