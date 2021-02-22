@@ -59,12 +59,9 @@ def get_max_pizzas_for_team(pizza_list, pizza_count_for_team):
         max_pizza_index = max(pizza_list_temp, key = lambda x: pizza_list_temp[x][0])
         points += len(pizza_list_temp[max_pizza_index][1])
         ingredients = pizza_list_temp.pop(max_pizza_index)
-        for ingredient in ingredients[1]:
-            for line in pizza_list_temp:
-                for ing in pizza_list_temp[line][1]:
-                    if ing == ingredient:
-                        pizza_list_temp[line][1].remove(ing)
-                        pizza_list_temp[line][0] -= 1
+        for line in pizza_list_temp:
+            pizza_list_temp[line][1].difference_update(ingredients[1])
+            pizza_list_temp[line][0] = len(pizza_list_temp[line][1])
         result[max_pizza_index] = pizza_list[max_pizza_index]
     return result, points ** 2
 
@@ -95,7 +92,7 @@ def solve_file_input(path):
             if i >= pizza_count:
                 break
             items = line.split()
-            result_line = [int(items[0]), items[1:]]
+            result_line = [int(items[0]), set(items[1:])]
             pizza_list[i] = result_line
         
     solution_output = get_problem_solution_output(pizza_list, \
