@@ -1,3 +1,5 @@
+#!/bin/python3.8
+
 from copy import deepcopy
 import sys
 import logging
@@ -15,14 +17,14 @@ def get_problem_solution_output(pizza_list, two_teams, three_teams, four_teams):
         if team_division < 1:
             continue
 
-        team_pizzas = (team_size, [])
         for _ in range(team_division):
+            team_pizzas = (team_size, [])
             pizzas = get_max_pizzas_for_team(pizza_list_temp, team_size)
             for element in pizzas[0]:
                 pizza_list_temp.pop(element)
                 team_pizzas[1].append(element)
             points += pizzas[1]
-        result.append(team_pizzas)
+            result.append(team_pizzas)
     
     logging.debug(points)
     return result
@@ -81,8 +83,7 @@ def write_output(path_to_base_on, solution_output):
             target_file.write(line)
 
 
-if __name__ == '__main__':
-    path = sys.argv[1]
+def solve_file_input(path):
     with open(path) as input_data:
         pizza_count, two_teams, three_teams, four_teams = \
             list(map(int, input_data.readline().split()))
@@ -100,3 +101,9 @@ if __name__ == '__main__':
     solution_output = get_problem_solution_output(pizza_list, \
             two_teams, three_teams, four_teams)
     write_output(path, solution_output)
+
+
+if __name__ == '__main__':
+    logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    for path in sys.argv[1:]:
+        solve_file_input(path)
