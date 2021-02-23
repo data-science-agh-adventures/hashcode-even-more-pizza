@@ -1,10 +1,8 @@
-#!/bin/python3.8
-
 from copy import deepcopy
 import sys
 import logging
 
-
+# xdddddddd
 def get_problem_solution_output(pizza_list, two_teams, three_teams, four_teams):
     team_divisions = divide_for_sum_of_team_sizes(len(pizza_list), \
         two_teams, three_teams, four_teams)
