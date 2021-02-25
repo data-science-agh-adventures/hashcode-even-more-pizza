@@ -1,6 +1,7 @@
 from collections import defaultdict
 
-with open("b.txt") as input_data:
+filename = 'a.txt'
+with open(filename) as input_data:
     simulationTime, intersectionsCount, streetsCount, carsCount, bonus = \
     list(map(int, input_data.readline().split()))
 
@@ -40,14 +41,35 @@ crossroads_points = []
 
 for i in range(len(crossroads)):
     crossroads_points.append(defaultdict(int))
-    temporaryList = []
+    # temporaryList = []
+    minimum = -1
     for element in crossroads[i][1]:
-        temporaryList.append(streets_points[element])
-    minimum = min(temporaryList)
-    if minimum > 0:
-        crossroads_points[i][element] = streets_points[element] // minimum
+        # temporaryList.append(streets_points[element])
+        current_points = streets_points[element]
+        if minimum == -1 or current_points < minimum and current_points != 0:
+            minimum = current_points
+    if minimum in [0, -1]:
+        continue
 
-print(streets_points)
-print(crossroads_points)
+    for street in crossroads[i][1]:
+        if streets_points[street] != 0:
+            crossroads_points[i][street] = streets_points[element] // minimum
+    # minimum = min(temporaryList)
+    # if minimum > 0:
+    #    crossroads_points[i][element] = streets_points[element] // minimum
 
+# print(streets_points)
+# print(crossroads_points)
+
+with open(filename.replace('.txt', '.out'), 'w') as output_data:
+    total = len(crossroads_points)
+    output_data.write(f'{total}\n')
+    for i, crossroad in enumerate(crossroads_points):
+        output_data.write(f'{i}\n')
+        streets_count = len(crossroad)
+        output_data.write(f'{streets_count}\n')
+        for street in crossroad:
+            output_data.write(f'{street} {crossroad[street]}\n')
+
+print('END')
 
