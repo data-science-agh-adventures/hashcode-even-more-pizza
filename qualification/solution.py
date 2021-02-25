@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-filename = 'a.txt'
+filename = 'f.txt'
 with open(filename) as input_data:
     simulationTime, intersectionsCount, streetsCount, carsCount, bonus = \
     list(map(int, input_data.readline().split()))
@@ -65,10 +65,14 @@ with open(filename.replace('.txt', '.out'), 'w') as output_data:
     total = len(crossroads_points)
     output_data.write(f'{total}\n')
     for i, crossroad in enumerate(crossroads_points):
+        crossroad_keys = list(filter(lambda x: crossroad[x] > 0, crossroad))
+        streets_count = len(crossroad_keys)
+        if streets_count == 0:
+            continue
+
         output_data.write(f'{i}\n')
-        streets_count = len(crossroad)
         output_data.write(f'{streets_count}\n')
-        for street in crossroad:
+        for street in crossroad_keys:
             output_data.write(f'{street} {crossroad[street]}\n')
 
 print('END')
